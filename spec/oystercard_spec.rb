@@ -1,6 +1,7 @@
 require 'oystercard'
 
 describe Oystercard do 
+    let(:station) {double :station}
 
     it 'has a balance of zero' do
         expect(subject.balance).to eq(0)
@@ -18,15 +19,15 @@ describe Oystercard do
         end 
     end
 
-    describe "#deduct" do
-       it'should take money off of the fare' do
-          expect(subject.deduct(3)).to eq(-3)
-       end
-    end
+    # describe "#deduct" do
+    #    it'should take money off of the fare' do
+    #       expect(subject.deduct(3)).to eq(-3)
+    #    end
+    # end
 
     describe "#in_journey" do
     it "should tell us if we are on a journey" do
-        expect(subject.in_journey).to eq false
+        expect(subject.in_journey?).to eq false
        end
     end 
 
@@ -34,12 +35,12 @@ describe Oystercard do
     it "should tell in_journey is true if there is enough balance" do
         minimum_balance = Oystercard::MINIMUM_FARE
         subject.top_up(minimum_balance)
-        expect(subject.touch_in).to eq true
+        expect(subject.touch_in(station)).to eq true
 
     end 
 
     it "should raise an error when balance is less that minimum balance" do 
-    expect{ subject.touch_in }.to raise_error "Insuficient balance"
+    expect{ subject.touch_in(station) }.to raise_error "Insuficient balance"
     end 
     end  
 
