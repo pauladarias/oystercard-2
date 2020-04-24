@@ -2,6 +2,7 @@ require 'oystercard'
 
 describe Oystercard do 
     let(:station) {double :station}
+    let(:exit_station) {double :exit_station}
 
     it 'has a balance of zero' do
         expect(subject.balance).to eq(0)
@@ -38,21 +39,28 @@ describe Oystercard do
         expect(subject.touch_in(station)).to eq station
 
     end 
+    end 
+
+    describe "#raise error" do
 
     it "should raise an error when balance is less that minimum balance" do 
     expect{ subject.touch_in(station) }.to raise_error "Insuficient balance"
     end 
     end  
 
+
+
     describe "#touch_out" do
     it "should tell us if we have touched out" do
-        expect(subject.touch_out).to eq nil
+        expect(subject.touch_out(exit_station)).to eq nil
     end
 
     it "should deduct a minimum fare" do
         minimum_balance = Oystercard::MINIMUM_FARE
-        expect { subject.touch_out}.to change { subject.balance }.by(-minimum_balance)
+        expect { subject.touch_out(exit_station)}.to change { subject.balance }.by(-minimum_balance)
     end 
+
+
     end 
 
     describe "#entry_station" do 
@@ -60,6 +68,20 @@ describe Oystercard do
         expect(subject.entry_station).to eq (nil)
     end 
     end
+
+   describe "#journeys" do 
+   before(:each) {subject.top_up(Oystercard::MINIMUM_FARE)} 
+
+        it "expects an empty list of journeys" do 
+        expect(subject.journeys).to eq ([])
+        end 
+    
+        it "record a journey" do 
+        subject.touch_in(station)
+        subject.touch_out(exit_station)
+        expect(subject.journeys[0]).to eq({entry: station, exit: exit_station})
+    end 
+    end 
 
 
 
